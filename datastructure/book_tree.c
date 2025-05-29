@@ -11,6 +11,7 @@ void insert_book_node(BookNode** root, BookNode* new_node);
 void initialize_book_tree(const char* filename);
 void parse_line_with_quotes(char* line);
 void parse_line_without_quotes(char* line);
+void print_book_tree(BookNode* root);
 char* strip_quotes(char* str);
 
 // BookNode 생성 함수
