@@ -5,15 +5,6 @@
 
 BookNode* book_root = NULL;
 
-// 함수 목록
-BookNode* create_book_node(const char* title, const char* author, const char* genre, const char* sub_genre);
-void insert_book_node(BookNode** root, BookNode* new_node);
-void initialize_book_tree(const char* filename);
-void parse_line_with_quotes(char* line);
-void parse_line_without_quotes(char* line);
-void print_book_tree(BookNode* root);
-char* strip_quotes(char* str);
-
 // BookNode 생성 함수
 BookNode* create_book_node(const char* title, const char* author, const char* genre, const char* sub_genre) {
   BookNode* node = (BookNode*)malloc(sizeof(BookNode));
@@ -74,12 +65,18 @@ void initialize_book_tree(const char* filename) {
 
   while (fgets(line, sizeof(line), file)) {
     line[strcspn(line, "\r\n")] = '\0';
+    char *title = NULL, *author = NULL, *genre = NULL, *sub_genre = NULL;
 
     if (strchr(line, '"')) {
-      parse_line_with_quotes(line);  
+      parse_line_with_quotes(line, &title, &author, &genre, &sub_genre);  
     } else {
-      parse_line_without_quotes(line);  
+      parse_line_without_quotes(line, &title, &author, &genre, &sub_genre);  
     }
+
+    if (title && author && genre && sub_genre) {
+      create_and_insert_tree(title, author, genre, sub_genre);
+    }
+
   }
 
   fclose(file);
@@ -87,7 +84,7 @@ void initialize_book_tree(const char* filename) {
 
 // 따옴표 포함 라인 처리
 // 라인의 각 토큰을 포인터가 가리키도록 포인터 배열 선언
-void parse_line_with_quotes(char* line) {
+void parse_line_with_quotes(char* line, char** title, char** author, char** genre, char** sub_genre) {
   char* fields[5] = { NULL };
   int field_index = 0;
   int in_quotes = 0;
@@ -108,18 +105,15 @@ void parse_line_with_quotes(char* line) {
   }
 
   if (field_index == 5) {  
-    char* title = strip_quotes(fields[1]);
-    char* author = strip_quotes(strlen(fields[2]) > 0 ? fields[2] : "Anonymous");
-    char* genre = strip_quotes(fields[3]);
-    char* sub_genre = strip_quotes(fields[4]);
-
-    BookNode* new_book = create_book_node(title, author, genre, sub_genre);
-    insert_book_node(&book_root, new_book);
+    *title = strip_quotes(fields[1]);
+    *author = strip_quotes(strlen(fields[2]) > 0 ? fields[2] : "Anonymous");
+    *genre = strip_quotes(fields[3]);
+    *sub_genre = strip_quotes(fields[4]);
   }
 }
 
 // 따옴표 포함하지 않는 라인 처리
-void parse_line_without_quotes(char* line) {
+void parse_line_without_quotes(char* line, char** title, char** author, char** genre, char** sub_genre) {
   char* fields[5];
   int i = 0;
   char* token = strtok(line, ",");
@@ -130,14 +124,16 @@ void parse_line_without_quotes(char* line) {
   }
 
   if (i == 5) {
-    const char* title = fields[1];
-    const char* author = (strlen(fields[2]) > 0) ? fields[2] : "Anonymous";
-    const char* genre = fields[3];
-    const char* sub_genre = fields[4];
-
-    BookNode* new_book = create_book_node(title, author, genre, sub_genre); 
-    insert_book_node(&book_root, new_book); 
+    *title = fields[1];
+    *author = (strlen(fields[2]) > 0) ? fields[2] : "Anonymous";
+    *genre = fields[3];
+    *sub_genre = fields[4];
   }
+}
+
+void create_and_insert_tree(const char* title, const char* author, const char* genre, const char* sub_genre) {
+  BookNode* new_book = create_book_node(title, author, genre, sub_genre);
+  insert_book_node(&book_root, new_book);
 }
 
 // 책 제목을 중위순회로 출력 (디버깅용 함수)
