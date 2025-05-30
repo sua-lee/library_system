@@ -1,19 +1,11 @@
 #include <stdio.h>
-#include "datastructure/book_tree.h"
-#include "datastructure/author_hash.h"
-#include "datastructure/genre_hash.h"
+#include "datastructure/users.h" 
 
 
 int main(void) {
-// 1. books.csv 파일로부터 BST 트리 구성
-  initialize_book_tree("books.csv");
-  initialize_genre_hash("books.csv");
-  initialize_author_hash_from_genre_hash();
-
-
-  // 3. 해시 테이블 출력 (디버깅용)
-  debug_print_author_hash_table();
-
+  User* head = NULL;
+  load_users("users.csv", &head);
+  print_users(head);
 
   int main_sel;
   printf("1. 도서 관리\n2. 회원 관리\n3. 대출 관리\n4. 베스트셀러\n선택: ");
