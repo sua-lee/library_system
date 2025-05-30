@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "datastructure/initialization.c" 
+#include "init_data/initialization.c" 
 
 
 int main(void) {
