@@ -68,7 +68,7 @@ initialize_book_tree("books.csv");
 initialize_genre_hash("books.csv");
 ├─ parse_line_with_quotes / without_quotes
 │ └─ insert_into_genre_hash_table()
-│ │ ├─ hash_genre()
+│ │ ├─ hash_string()
 │ │ ├─ create_genre_bucket()
 │ │ ├─ insert_sub_genre_list()
 │ │ ├─ create_book_node()

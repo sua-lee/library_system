@@ -8,7 +8,7 @@
 GenreBucket* genre_hash_table[HASH_TABLE_SIZE] = { NULL };
 
 // 해싱 함수 djb 알고리즘을 참조함
-int hash_genre(const char* genre) {
+int hash_string(const char* genre) {
     unsigned long hash = 5381; // 초기값: djb2 알고리즘의 마법 숫자
     int c;
 
@@ -97,7 +97,7 @@ void insert_into_genre_hash_table(const char* title, const char* author, const c
   }
 
   // 2. 해시 인덱스 계산
-  int index = hash_genre(genre);
+  int index = hash_string(genre);
   GenreBucket* current = genre_hash_table[index];
 
   // 3. 체이닝을 따라 동일한 genre 탐색

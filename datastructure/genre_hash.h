@@ -23,7 +23,7 @@ typedef struct GenreBucket {
 extern GenreBucket* genre_hash_table[HASH_TABLE_SIZE];
 
 // 함수 선언
-int hash_genre(const char* genre);
+int hash_string(const char* genre);
 GenreBucket* create_genre_bucket(const char* genre);
 SubGenreNode* create_sub_genre_node(const char* sub_genre);
 void initialize_genre_hash(const char* filename);
