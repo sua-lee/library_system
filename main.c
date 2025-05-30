@@ -1,11 +1,10 @@
 #include <stdio.h>
-#include "datastructure/users.h" 
+#include "datastructure/initialization.c" 
 
 
 int main(void) {
-  User* head = NULL;
-  load_users("users.csv", &head);
-  print_users(head);
+
+  initialization();
 
   int main_sel;
   printf("1. 도서 관리\n2. 회원 관리\n3. 대출 관리\n4. 베스트셀러\n선택: ");
