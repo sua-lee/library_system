@@ -1,45 +1,75 @@
-# library_system
+# 📚 Library System
+
+도서 정보를 기반으로 해시 테이블 및 이진 탐색 트리를 구성하여 다양한 방식의 도서 검색을 지원하는 시스템입니다.  
+장르 ➝ 서브장르 ➝ 도서 구조로 저장되며, `CSV` 파일에서 데이터를 불러와 초기화됩니다.
 
 ---
 
-# 1. datastructure
+## 🗂️ 폴더 구조
 
-## Book Tree Initialization Flow 주요 흐름 요약
-
-1. **책 트리의 루트 포인터를 전역으로 선언**
-
-   - `BookNode* book_root = NULL;`
-
-2. **CSV 파일 열기 및 헤더 스킵**
-
-   - `fopen()`으로 파일을 열고 `fgets()`로 첫 줄을 건너뜀
-
-3. **각 줄을 읽어 개행문자 제거 후, 따옴표 포함 여부 검사**
-
-   - `strchr(line, '"')`로 따옴표 유무 확인
-   - 조건에 따라 `parse_line_with_quotes()` 또는 `parse_line_without_quotes()` 호출
-
-4. **줄 파싱 및 필드 추출**
-
-### parse_line_without_quotes()
-
-- 각 필드를 `strtok()`으로 단순하게 구분해 `fields[]`에 저장
-- 필드 수가 부족한 경우 무시
-- `create_book_node()`로 `BookNode` 생성 후 `insert_book_node()` 호출
-
-### parse_line_with_quotes()
-
-- 따옴표 안 쉼표를 무시하기 위한 커스텀 파서 구현
-- `in_quotes` 플래그를 사용하여 쉼표 처리 방식 결정
-- 필드를 `fields[]` 배열에 저장
-- author가 비어 있을 경우 `"Anonymous"`로 대체
-- `create_book_node()`로 `BookNode` 생성 후 `insert_book_node()` 호출
-
-5. **BookNode 메모리 할당 및 삽입**
-
-- `create_book_node(title, author, genre, sub_genre)` 호출
-- 트리에 삽입: `insert_book_node(&book_root, new_book)`
+library_system/
+├── datastructure/
+│ ├── book_tree.h / book_tree.c
+│ ├── genre_hash.h / genre_hash.c
+│ └── …
+├── books.csv
+├── main.c
+└── README.md
 
 ---
 
-이 문서는 향후 디버깅 및 유지 보수를 위한 개발자 레퍼런스로 활용될 수 있습니다.
+## 📈 주요 자료구조
+
+### 📘 BookNode (도서 트리 노드)
+
+```c
+typedef struct BookNode {
+    char title[100];
+    char author[100];
+    char genre[50];
+    char sub_genre[50];
+    struct BookNode* left;
+    struct BookNode* right;
+} BookNode;
+```
+
+### 🧱 GenreBucket (장르 해시 테이블)
+
+```c
+typedef struct GenreBucket {
+    char genre[50];
+    SubGenreNode* sub_genre_list;
+    struct GenreBucket* next; // 체이닝
+} GenreBucket;
+```
+
+### 📚 SubGenreNode (서브장르 연결 리스트)
+
+```c
+typedef struct SubGenreNode {
+    char sub_genre[50];
+    BookNode* book_bst; // 도서 BST
+    struct SubGenreNode* next;
+} SubGenreNode;
+```
+
+## 🔧 초기화 흐름 요약
+
+### 1. 이진트리 탐색 방식
+
+initialize_book_tree("books.csv");
+├─ parse_line_with_quotes / without_quotes
+│ ├─ create_and_insert_tree()
+│ │ ├─ create_book_node()
+│ │ └─ insert_book_node()
+
+### 2. 장르 해시 테이블 방식
+
+initialize_genre_hash("books.csv");
+├─ parse_line_with_quotes / without_quotes
+│ └─ insert_into_genre_hash_table()
+│ │ ├─ hash_genre()
+│ │ ├─ create_genre_bucket()
+│ │ ├─ insert_sub_genre_list()
+│ │ ├─ create_book_node()
+│ │ └─ insert_book_node()
