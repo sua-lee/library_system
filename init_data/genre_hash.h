@@ -31,5 +31,7 @@ void insert_into_genre_hash_table(const char* title, const char* author, const c
 SubGenreNode* insert_sub_genre_list(SubGenreNode** head, const char* sub_genre);
 void debug_print_book_bst(BookNode* root, const char* prefix, int is_last);
 void debug_print_genre_hash_table(void);
+void add_existing_book_to_genre_hash(BookNode* book_to_add);
+int remove_book_from_genre_hash(BookNode* book_to_delete);
 
 #endif

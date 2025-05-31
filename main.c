@@ -6,6 +6,7 @@
 #include "common/structures.h"      // Date 구조체 직접 사용 안하지만, loan_management.h가 사용
 #include "common/date_utils.h"      // get_current_date() 등
 #include "features/bestseller.h" // display_bestsellers 함수 사용을 위해
+#include "features/book_management.h"
 
 // 전역 스택 변수 참조
 extern BookStack* g_recent_activity_stack;
@@ -31,7 +32,7 @@ int main(void) {
 
         switch (main_sel) {
             case 1:
-                printf("도서 관리 기능은 아직 구현되지 않았습니다.\n"); //
+                handle_book_management_menu();
                 break;
             case 2:
                 printf("회원 관리 기능은 아직 구현되지 않았습니다.\n"); //
@@ -71,7 +72,7 @@ void display_main_menu() {
     printf("=======================\n");
     printf("도서관 관리 시스템\n");
     printf("=======================\n");
-    printf("1. 도서 관리 (미구현)\n");
+    printf("1. 도서 관리 \n");
     printf("2. 회원 관리 (미구현)\n");
     printf("3. 대출/반납 관리\n");
     printf("4. 베스트셀러\n");
