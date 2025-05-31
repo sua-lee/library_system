@@ -43,8 +43,6 @@ void count_book_frequency_callback(BookNode* book, void* context) {
             BookFrequency* temp_freq = (BookFrequency*)realloc(ctx->frequencies, (*(ctx->capacity)) * sizeof(BookFrequency));
             if (!temp_freq) {
                 fprintf(stderr, "오류: 빈도수 배열 용량 확장 실패 (callback)\n");
-                // realloc 실패 시 기존 frequencies는 유효하므로, 더 이상 추가하지 않도록 처리 필요
-                // 또는 프로그램 종료 등의 심각한 오류 처리
                 return; // 더 이상 추가 불가
             }
             ctx->frequencies = temp_freq; // realloc 성공 시 포인터 업데이트

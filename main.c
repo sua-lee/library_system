@@ -7,6 +7,7 @@
 #include "common/date_utils.h"      // get_current_date() 등
 #include "features/bestseller.h" // display_bestsellers 함수 사용을 위해
 #include "features/book_management.h"
+#include "features/user_management.h"
 
 // 전역 스택 변수 참조
 extern BookStack* g_recent_activity_stack;
@@ -35,8 +36,7 @@ int main(void) {
                 handle_book_management_menu();
                 break;
             case 2:
-                printf("회원 관리 기능은 아직 구현되지 않았습니다.\n"); //
-                // print_users(user_list_head); // 디버깅용 (user_list_head는 initialization.c에 정의된 전역변수)
+                handle_user_management_menu(); // 새로 추가한 함수 호출
                 break;
             case 3:
                 handle_loan_menu_options();
@@ -58,7 +58,6 @@ int main(void) {
                 break;
             case 0:
                 printf("프로그램을 종료합니다.\n");
-                // TODO: 메모리 해제
                 exit(0);
             default:
                 printf("잘못된 입력입니다.\n"); //
@@ -73,7 +72,7 @@ void display_main_menu() {
     printf("도서관 관리 시스템\n");
     printf("=======================\n");
     printf("1. 도서 관리 \n");
-    printf("2. 회원 관리 (미구현)\n");
+    printf("2. 회원 관리 \n");
     printf("3. 대출/반납 관리\n");
     printf("4. 베스트셀러\n");
     printf("0. 종료\n");

@@ -16,6 +16,7 @@ User* create_user(int number, const char* name) {
     new_user->name[MAX_NAME_LEN - 1] = '\0'; // 안전한 널 종료
     new_user->next = NULL;
 
+    new_user->is_book_club_member = 0; // 신규 필드 기본값 설정 (예: 0은 비회원)
     return new_user;
 }
 

@@ -1,7 +1,7 @@
 #ifndef BOOK_MANAGEMENT_H
 #define BOOK_MANAGEMENT_H
 
-// 필요한 구조체 정의를 포함하기 위해 BookNode와 User 구조체가 정의된 헤더 파일을 포함합니다.
+// 필요한 구조체 정의를 포함하기 위해 BookNode와 User 구조체가 정의된 헤더 파일을 포함
 #include "../init_data/book_tree.h" // BookNode 구조체 정의 포함
 #include "../init_data/users.h"   // User 구조체 정의 포함 (display_book_details 함수에서 사용)
 
