@@ -1,16 +1,64 @@
 #include <stdlib.h>
+#include <stdlib.h>
+#include <stdio.h> 
 #include "book_tree.h"
 #include "genre_hash.h"
 #include "author_hash.h"
 #include "users.h"
+#include "../common/queue.h" // create_queue() 사용
 
-void initialization (void);
+// 함수 선언 (initialization.h가 있다면 그곳에)
+void initialize_loan_fields_for_user(User* user);
+void initialize_loan_fields_for_book(BookNode* book);
+void initialize_all_books_loan_fields_recursive(BookNode* root);
+void initialization (void); //
 
-void initialization (void) {
-  User* head = NULL;
-  load_users("users.csv", &head);
 
-  initialize_book_tree("books.csv");
-  initialize_genre_hash("books.csv");
-  initialize_author_hash_from_genre_hash();
+User* user_list_head = NULL; // main 등에서 접근 가능하도록 전역으로 선언
+// book_root는 book_tree.c에 전역으로 선언되어 있음
+
+void initialize_loan_fields_for_user(User* user) {
+    if (!user) return;
+    user->overdue = 0;
+    user->borrowed_num = 0;
+    user->reserved_book_node = NULL;
+    user->borrowed_book_list_head = NULL;
+    user->overdue_book_list_head = NULL;
+}
+
+void initialize_loan_fields_for_book(BookNode* book) {
+    if (!book) return;
+    book->is_available_now = 1;
+    book->reservation_queue = create_queue(); // common/queue.c 의 함수 사용
+    book->reservation_list_num = 0;
+}
+
+void initialize_all_books_loan_fields_recursive(BookNode* root) {
+    if (root == NULL) return;
+    initialize_loan_fields_for_book(root);
+    initialize_all_books_loan_fields_recursive(root->left);
+    initialize_all_books_loan_fields_recursive(root->right);
+}
+
+void initialization (void) { //
+    load_users("users.csv", &user_list_head); //
+    User* current_user = user_list_head;
+    while (current_user != NULL) {
+        initialize_loan_fields_for_user(current_user);
+        current_user = current_user->next;
+    }
+    printf("사용자 정보 및 대출 필드 초기화 완료.\n");
+
+    initialize_book_tree("books.csv"); //
+    initialize_all_books_loan_fields_recursive(book_root);
+    printf("도서 트리 및 대출 필드 초기화 완료.\n");
+
+    // genre_hash.c 의 insert_into_genre_hash_table 내에서 BookNode 생성 시
+    // 대출 필드를 초기화하도록 수정하는 것이 더 좋습니다.
+    // 만약 그렇게 수정했다면, 아래 initialize_genre_hash 호출만으로 충분합니다.
+    initialize_genre_hash("books.csv"); //
+    printf("장르 해시 테이블 초기화 완료.\n");
+
+    initialize_author_hash_from_genre_hash(); //
+    printf("저자 해시 테이블 초기화 완료.\n");
 }

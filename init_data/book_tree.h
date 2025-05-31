@@ -1,15 +1,22 @@
 #ifndef BOOK_TREE_H
 #define BOOK_TREE_H
 
+// Forward declaration
+struct Queue; // common/queue.h 에 정의된 Queue
+
 // 도서 노드: 제목 기준 BST
 typedef struct BookNode {
-  char title[100];
-  char author[50];
-  char genre[30];
-  char sub_genre[50];
+    char title[100];
+    char author[50];
+    char genre[30];
+    char sub_genre[50];
+  
+    int is_available_now;
+    struct Queue* reservation_queue;
+    int reservation_list_num;
 
-  struct BookNode *left;
-  struct BookNode *right;
+    struct BookNode *left;
+    struct BookNode *right;
 
 } BookNode;
 
@@ -23,5 +30,6 @@ void parse_line_without_quotes(char* line, char** title, char** author, char** g
 void print_book_tree(BookNode* root);
 char* strip_quotes(char* str);
 void create_and_insert_tree(const char* title, const char* author, const char* genre, const char* sub_genre);
+BookNode* find_book_by_title(BookNode* root, const char* title);
 
 #endif
