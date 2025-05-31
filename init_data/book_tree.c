@@ -143,3 +143,19 @@ void print_book_tree(BookNode* root) {
     printf("제목: %s, 저자: %s, 장르: %s, 서브장르: %s\n", root->title, root->author, root->genre, root->sub_genre);
     print_book_tree(root->right);
 }
+
+BookNode* find_book_by_title(BookNode* root, const char* title) {
+    if (root == NULL) {
+        return NULL; // 트리가 비었거나, 해당 경로에 책이 없음
+    }
+
+    int cmp = strcmp(title, root->title);
+
+    if (cmp == 0) {
+        return root; // 책을 찾음
+    } else if (cmp < 0) {
+        return find_book_by_title(root->left, title); // 왼쪽 서브트리 검색
+    } else {
+        return find_book_by_title(root->right, title); // 오른쪽 서브트리 검색
+    }
+}

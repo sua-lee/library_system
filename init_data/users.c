@@ -67,3 +67,26 @@ void print_users(User* head) {
         head = head->next;
     }
 }
+
+User* find_user_by_number(User* head, int user_number) {
+    User* current = head;
+    while (current != NULL) {
+        if (current->number == user_number) {
+            return current; // 사용자를 찾음
+        }
+        current = current->next;
+    }
+    return NULL; // 해당 번호의 사용자를 찾지 못함
+}
+
+// 이름으로 찾는 함수도 필요하다면 여기에 구현
+User* find_user_by_name(User* head, const char* user_name) {
+    User* current = head;
+    while (current != NULL) {
+        if (strcmp(current->name, user_name) == 0) { // 문자열 비교
+            return current; // 첫 번째로 일치하는 사용자 반환
+        }
+        current = current->next;
+    }
+    return NULL;
+}
