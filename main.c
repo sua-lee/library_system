@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "init_data/initialization.h" // initialization() 및 전역 변수 사용
-#include "circulation/loan_management.h"
+#include "features/loan_management.h"
 #include "common/structures.h"      // Date 구조체 직접 사용 안하지만, loan_management.h가 사용
 #include "common/date_utils.h"      // get_current_date() 등
 
