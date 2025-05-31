@@ -102,3 +102,49 @@ void debug_print_author_hash_table(void) {
         printf("\n");
     }
 }
+
+// author_hash.c 에 추가
+
+// 저자 해시 테이블에서 특정 BookNode를 삭제하는 함수
+// 주의: 이 함수는 BookNode 자체를 free하지 않습니다. 단지 해시 테이블의 연결 리스트에서만 제거합니다.
+int remove_book_from_author_hash(BookNode* book_to_delete) {
+    if (!book_to_delete || strlen(book_to_delete->author) == 0) return 0;
+
+    int index = hash_string(book_to_delete->author, AUTHOR_HASH_TABLE_SIZE); //
+    AuthorBucket* current_bucket = author_hash_table[index]; //
+    AuthorBucket* prev_bucket = NULL;
+
+    while (current_bucket != NULL) {
+        if (strcmp(current_bucket->author, book_to_delete->author) == 0) { //
+            BookListNode* current_book_node = current_bucket->book_list_head; //
+            BookListNode* prev_book_node = NULL;
+            while (current_book_node != NULL) {
+                if (current_book_node->book == book_to_delete) { // 포인터 주소 비교
+                    if (prev_book_node == NULL) {
+                        current_bucket->book_list_head = current_book_node->next;
+                    } else {
+                        prev_book_node->next = current_book_node->next;
+                    }
+                    free(current_book_node); // BookListNode 자체는 여기서 해제
+
+                    // 만약 AuthorBucket의 book_list_head가 비었다면 AuthorBucket도 삭제 (선택적)
+                    if (current_bucket->book_list_head == NULL) {
+                        if (prev_bucket == NULL) {
+                            author_hash_table[index] = current_bucket->next;
+                        } else {
+                            prev_bucket->next = current_bucket->next;
+                        }
+                        free(current_bucket); // AuthorBucket 자체 해제
+                    }
+                    return 1; // 삭제 성공
+                }
+                prev_book_node = current_book_node;
+                current_book_node = current_book_node->next;
+            }
+            return 0; // 해당 저자의 책 목록에 없음
+        }
+        prev_bucket = current_bucket;
+        current_bucket = current_bucket->next;
+    }
+    return 0; // 해당 저자 없음
+}

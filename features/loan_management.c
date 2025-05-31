@@ -9,6 +9,8 @@
 #include "../common/list.h"
 #include "../common/book_stack.h" // push_book_to_stack 등 사용
 #include "../init_data/initialization.h" // g_recent_activity_stack 사용을 위해
+// BookNode의 cumulative_loan_count 및 loan_history_head를 사용하기 위해 추가
+#include "../init_data/book_tree.h" 
 
 extern BookStack* g_recent_activity_stack;
 
@@ -61,6 +63,8 @@ int handle_loan_request(User* current_user, BookNode* requested_book, Date loan_
         add_bad_node_to_list(&(current_user->borrowed_book_list_head), new_loan); // common/list.c
 
         requested_book->is_available_now = 0;
+        if (requested_book->cumulative_loan_count < 0) requested_book->cumulative_loan_count =0; // 혹시 모를 초기화 오류 방지
+        requested_book->cumulative_loan_count++; // 누적 대출 횟수 증가
 
         printf("알림: '%s' 도서 대출 완료. 반납 예정일: ", requested_book->title);
         push_book_to_stack(g_recent_activity_stack, requested_book); // 스택에 추가
@@ -139,6 +143,21 @@ int handle_return_request(User* current_user, BookNode* returned_book, Date retu
 
     current_user->borrowed_num--;
     printf("알림: '%s' 도서 반납 처리되었습니다.\n", returned_book->title);
+
+    BookAndDate* history_record = (BookAndDate*)malloc(sizeof(BookAndDate));
+    if (history_record) {
+        memcpy(history_record, loan_record, sizeof(BookAndDate));
+        // loan_record의 user_information은 반납하는 current_user를 가리켜야 합니다.
+        // loan_record에서 이미 올바르게 설정되어 있다고 가정합니다.
+        history_record->user_information = current_user; // 명시적으로 현재 사용자 설정
+        history_record->action_date = loan_record->action_date; // 대출 당시의 action_date
+        history_record->due_date = loan_record->due_date;       // 대출 당시의 due_date (실제 반납일은 return_date)
+                                                               // 필요하다면 BookAndDate 구조체에 실제 반납일을 추가할 수 있음
+        history_record->next = NULL;
+        add_bad_node_to_list(&(returned_book->loan_history_head), history_record); //
+    } else {
+        fprintf(stderr, "메모리 부족: 대출 이력 기록 실패 (%s)\n", returned_book->title);
+    }
 
     if (is_date_overdue(return_date, loan_record->due_date)) { // common/date_utils.c
         printf("경고: '%s' 도서가 연체되었습니다. 반납 예정일: ", returned_book->title);
@@ -266,6 +285,8 @@ int process_pickup_loan(User* current_user, BookNode* reserved_book, BookAndDate
     free_bad_node(pickup_record_in_global_list); // common/list.c
 
     push_book_to_stack(g_recent_activity_stack, reserved_book); // 스택에 추가
+    if (reserved_book->cumulative_loan_count < 0) reserved_book->cumulative_loan_count = 0;
+    reserved_book->cumulative_loan_count++; // 누적 대출 횟수 증가
     printf("알림: 예약 도서 '%s' 수령 및 대출 완료. 반납 예정일: ", reserved_book->title);
     print_date(return_due_date); // common/date_utils.c
     printf("\n");

@@ -26,6 +26,8 @@ void insert_into_author_hash_table(BookNode* book);
 void initialize_author_hash_from_genre_hash(void);
 void insert_books_from_bst(BookNode* root);
 void debug_print_author_hash_table(void);
+int remove_book_from_author_hash(BookNode* book_to_delete);
+
 
 
 #endif  // AUTHOR_HASH_H
