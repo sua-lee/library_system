@@ -105,19 +105,10 @@ int delete_book_logic(const char* title) {
     }
     
     // 3. 메인 BST에서 삭제
-    // delete_from_bst_by_title_recursive는 삭제된 노드의 포인터를 반환해야 함.
-    // 그러나 실제로는 루트를 변경하고, 삭제된 노드는 내부적으로 처리되거나,
-    // 삭제된 노드 자체를 반환하여 free하도록 할 수 있음.
-    // 여기서는 book_to_delete_main_bst_ref가 삭제될 대상임을 알고 있음.
     // book_root를 직접 수정하며 삭제.
     BookNode* node_actually_deleted_from_main_bst = delete_from_bst_by_title_recursive(&book_root, title);
-    
-    // node_actually_deleted_from_main_bst 와 book_to_delete_main_bst_ref 가 동일해야 함 (단, BST 재조정 시 다른 노드가 될 수도 있음)
-    // 핵심은 book_to_delete_main_bst_ref 포인터가 가리키는 BookNode의 정보가 삭제 대상이라는 것.
-    // 그리고 이 포인터가 여러 자료구조에서 공유되었다고 가정.
 
-    if (node_actually_deleted_from_main_bst) { // BST에서 성공적으로 연결이 끊겼다면
-        // (만약 delete_from_bst_by_title_recursive가 삭제된 노드를 반환하고, 그 노드가 book_to_delete_main_bst_ref와 같다면)
+    if (node_actually_deleted_from_main_bst) { 
         // 4. BookNode 메모리 및 내부 할당 메모리 최종 해제
         // 이 BookNode는 모든 자료구조에서 참조가 제거되었으므로 안전하게 해제 가능.
         fully_free_book_node(book_to_delete_main_bst_ref); // book_to_delete_main_bst_ref 가 실제 삭제된 원본 노드
@@ -125,7 +116,6 @@ int delete_book_logic(const char* title) {
         return 1;
     } else {
         printf("오류: 메인 BST에서 도서 '%s' 삭제 중 문제 발생.\n", title);
-        // 이미 다른 해시테이블에서 제거했을 수 있으므로, 롤백 로직 또는 추가 점검 필요.
         return 0;
     }
 }
@@ -192,8 +182,7 @@ void display_book_details(BookNode* book, User* current_user_list_head) {
 }
 
 void search_books_by_title_logic(const char* title) {
-    // ... (이전 답변과 동일하게 구현)
-    BookNode* book = find_book_by_title(book_root, title); //
+    BookNode* book = find_book_by_title(book_root, title); 
     if (book) {
         display_book_details(book, user_list_head);
     } else {
@@ -202,7 +191,6 @@ void search_books_by_title_logic(const char* title) {
 }
 
 void search_books_by_author_logic(const char* author_name) {
-    // ... (이전 답변과 동일하게 구현)
     // display_book_details 호출 시 user_list_head 전달
     int index = hash_string(author_name, AUTHOR_HASH_TABLE_SIZE); //
     AuthorBucket* author_bucket = author_hash_table[index]; //
@@ -253,8 +241,7 @@ void search_books_by_genre_logic(const char* genre_name, const char* sub_genre_n
             int printed_genre_header = 0;
 
             if (sub_node == NULL && !(sub_genre_name && strlen(sub_genre_name) > 0) ) {
-                 // 주 장르는 있지만 서브장르 목록이 비어있고, 특정 서브장르를 찾고 있지 않은 경우
-                 // 이 메시지는 필요 없을 수 있음. 아래 found_any_book_in_genre 에서 처리.
+
             }
 
             while (sub_node) {
@@ -304,7 +291,6 @@ void search_books_by_genre_logic(const char* genre_name, const char* sub_genre_n
 }
 
 // UI 함수들 (add_new_book_ui, delete_book_ui, search_book_ui, handle_book_management_menu)은
-// 이전 답변의 `features/book_management.c` 예시와 유사하게 작성.
 void add_new_book_ui() {
     char title[100], author[50], genre[30], sub_genre[50];
     printf("추가할 도서 제목: "); scanf(" %[^\n]", title);

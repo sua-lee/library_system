@@ -157,8 +157,7 @@ int handle_return_request(User* current_user, BookNode* returned_book, Date retu
     BookAndDate* history_record = (BookAndDate*)malloc(sizeof(BookAndDate));
     if (history_record) {
         memcpy(history_record, loan_record, sizeof(BookAndDate));
-        // loan_record의 user_information은 반납하는 current_user를 가리켜야 합니다.
-        // loan_record에서 이미 올바르게 설정되어 있다고 가정합니다.
+
         history_record->user_information = current_user; // 명시적으로 현재 사용자 설정
         history_record->action_date = loan_record->action_date; // 대출 당시의 action_date
         history_record->due_date = loan_record->due_date;       // 대출 당시의 due_date (실제 반납일은 return_date)

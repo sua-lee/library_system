@@ -1,8 +1,0 @@
-{
-  "files.associations": {
-    "book_tree.h": "c",
-    "genre_hash.h": "c",
-    "users.h": "c",
-    "initialization.h": "c"
-  }
-}

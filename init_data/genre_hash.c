@@ -231,10 +231,7 @@ int remove_book_from_genre_hash(BookNode* book_to_delete) {
                     // delete_from_bst_by_title_recursive 함수는 삭제된 노드를 반환하며, 그 노드는 free될 대상.
                     // 하지만 여기서는 해시 테이블의 포인터만 제거하고, 실제 free는 delete_book_logic에서.
                     delete_from_bst_by_title_recursive(&(current_sub_node->book_bst), book_to_delete->title);
-                    // if (deleted_node_in_genre_bst) {
-                    //     // 여기서 free(deleted_node_in_genre_bst)를 하면 안됨.
-                    //     // delete_book_logic에서 book_to_delete_bst_node가 한 번만 free 되어야 함.
-                    // }
+                    
 
                     // 만약 서브장르 BST가 비었다면 SubGenreNode를 삭제할 수도 있음 (선택적)
                     if (current_sub_node->book_bst == NULL) {

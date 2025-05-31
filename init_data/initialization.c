@@ -49,9 +49,6 @@ void initialization (void) { //
     initialize_all_books_loan_fields_recursive(book_root);
     printf("도서 트리 및 대출 필드 초기화 완료.\n");
 
-    // genre_hash.c 의 insert_into_genre_hash_table 내에서 BookNode 생성 시
-    // 대출 필드를 초기화하도록 수정하는 것이 더 좋습니다.
-    // 만약 그렇게 수정했다면, 아래 initialize_genre_hash 호출만으로 충분합니다.
     initialize_genre_hash("books.csv"); //
     printf("장르 해시 테이블 초기화 완료.\n");
 

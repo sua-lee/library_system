@@ -102,9 +102,6 @@ int delete_user_logic(int user_number) {
     }
 
     // 사용자 노드 메모리 해제
-    // User 구조체 내의 borrowed_book_list_head, overdue_book_list_head는
-    // 대출/반납 로직에 의해 관리되므로, 사용자가 책을 모두 반납했다면 비어있어야 정상.
-    // 만약을 위해 여기서도 해제 로직 추가 (하지만 정책상 대출 중이면 삭제 안되므로 비어있을 것)
     if (user_to_delete->borrowed_book_list_head) {
          free_bad_list(user_to_delete->borrowed_book_list_head); //
          user_to_delete->borrowed_book_list_head = NULL;
@@ -113,7 +110,6 @@ int delete_user_logic(int user_number) {
         free_bad_list(user_to_delete->overdue_book_list_head); //
         user_to_delete->overdue_book_list_head = NULL;
     }
-    // reserved_book_node는 BookNode*이므로 여기서 free하지 않음 (BookNode는 도서 시스템이 관리)
 
     printf("회원 '%s'(번호: %d) 삭제 완료.\n", user_to_delete->name, user_to_delete->number);
     free(user_to_delete);
@@ -131,8 +127,7 @@ User* search_user_by_number_logic(int user_number) {
 }
 
 User* search_user_by_name_logic(const char* name) {
-    // find_user_by_name은 첫 번째 일치하는 사용자만 반환.
-    // 동명이인이 있을 경우 모두를 보여주려면 리스트를 순회해야 함.
+
     printf("\n--- 회원 이름 '%s' 검색 결과 ---\n", name);
     User* current = user_list_head;
     int found_count = 0;
@@ -174,7 +169,6 @@ int update_user_club_status_logic(int user_number, int new_status) {
 void add_new_user_ui() {
     int number, club_status_choice;
     char name[MAX_NAME_LEN];
-    // 간단하게 다음 사용자 번호를 자동으로 할당하는 로직 (더 견고한 방법 필요할 수 있음)
     User* temp = user_list_head;
     int max_num = 0;
     while(temp){
