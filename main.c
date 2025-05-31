@@ -72,7 +72,7 @@ void display_main_menu() {
     printf("도서관 관리 시스템\n");
     printf("=======================\n");
     printf("1. 도서 관리 \n");
-    printf("2. 회원 관리 (미구현)\n");
+    printf("2. 회원 관리 \n");
     printf("3. 대출/반납 관리\n");
     printf("4. 베스트셀러\n");
     printf("0. 종료\n");
