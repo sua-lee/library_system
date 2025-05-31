@@ -5,10 +5,10 @@
 #include "features/loan_management.h"
 #include "common/structures.h"      // Date 구조체 직접 사용 안하지만, loan_management.h가 사용
 #include "common/date_utils.h"      // get_current_date() 등
+#include "features/bestseller.h" // display_bestsellers 함수 사용을 위해
 
-// main.c는 이전 답변과 거의 동일하게 유지될 수 있습니다.
-// find_user_by_number 와 find_book_by_title 함수는
-// 각각 init-data/users.c 와 init-data/book_tree.c 에 구현되어야 합니다.
+// 전역 스택 변수 참조
+extern BookStack* g_recent_activity_stack;
 
 // 함수 프로토타입
 void display_main_menu();
@@ -41,7 +41,19 @@ int main(void) {
                 handle_loan_menu_options();
                 break;
             case 4:
-                printf("베스트셀러 기능은 아직 구현되지 않았습니다.\n"); //
+                if (g_recent_activity_stack) {
+                    int n_bestsellers;
+                    printf("출력할 베스트셀러 개수 입력: ");
+                    if (scanf("%d", &n_bestsellers) == 1 && n_bestsellers > 0) {
+                        while(getchar() != '\n'); // 버퍼 정리
+                        display_bestsellers(g_recent_activity_stack, n_bestsellers);
+                    } else {
+                        printf("잘못된 입력입니다. 양수를 입력해주세요.\n");
+                        while(getchar() != '\n'); // 버퍼 정리
+                    }
+                } else {
+                    printf("베스트셀러 스택이 초기화되지 않았습니다.\n");
+                }
                 break;
             case 0:
                 printf("프로그램을 종료합니다.\n");
@@ -62,7 +74,7 @@ void display_main_menu() {
     printf("1. 도서 관리 (미구현)\n");
     printf("2. 회원 관리 (미구현)\n");
     printf("3. 대출/반납 관리\n");
-    printf("4. 베스트셀러 (미구현)\n");
+    printf("4. 베스트셀러\n");
     printf("0. 종료\n");
     printf("=======================\n");
 }

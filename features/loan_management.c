@@ -7,7 +7,10 @@
 #include "../common/date_utils.h"
 #include "../common/queue.h"
 #include "../common/list.h"
+#include "../common/book_stack.h" // push_book_to_stack 등 사용
+#include "../init_data/initialization.h" // g_recent_activity_stack 사용을 위해
 
+extern BookStack* g_recent_activity_stack;
 
 // 전역 변수 정의
 BookAndDate* global_pickup_list_head = NULL;
@@ -60,11 +63,12 @@ int handle_loan_request(User* current_user, BookNode* requested_book, Date loan_
         requested_book->is_available_now = 0;
 
         printf("알림: '%s' 도서 대출 완료. 반납 예정일: ", requested_book->title);
+        push_book_to_stack(g_recent_activity_stack, requested_book); // 스택에 추가
         print_date(return_due_date); // common/date_utils.c
         printf("\n");
         return 1;
     } else {
-                // 현재 대출하려는 사용자가 이 책을 이미 빌리고 있는지 먼저 확인
+        // 현재 대출하려는 사용자가 이 책을 이미 빌리고 있는지 먼저 확인
         BookAndDate* current_borrowed_list = current_user->borrowed_book_list_head;
         int already_borrowed_by_user = 0; // 사용자가 이미 대출 중인지 확인하는 플래그
 
@@ -80,7 +84,6 @@ int handle_loan_request(User* current_user, BookNode* requested_book, Date loan_
             printf("알림: '%s'님은 현재 '%s' 도서를 이미 대출 중입니다. 예약할 수 없습니다.\n", current_user->name, requested_book->title);
             return 0; // 예약 불가
         }
-        // ==================== 수정된 로직 중간 =====================
 
         // 사용자가 이미 대출 중인 경우가 아니라면, 일반적인 "즉시 대출 불가" 메시지 출력
         printf("알림: '%s' 도서는 현재 즉시 대출이 불가능합니다 (상태: %d, 예약자수: %d).\n",
@@ -109,6 +112,7 @@ int handle_loan_request(User* current_user, BookNode* requested_book, Date loan_
             enqueue_user(requested_book->reservation_queue, current_user); // common/queue.c
             requested_book->reservation_list_num++;
             current_user->reserved_book_node = requested_book;
+            push_book_to_stack(g_recent_activity_stack, requested_book); // 스택에 추가
             printf("알림: '%s' 도서 예약 완료. 현재 대기 순번: %d\n", requested_book->title, requested_book->reservation_list_num);
             return 1;
         } else {
@@ -261,6 +265,7 @@ int process_pickup_loan(User* current_user, BookNode* reserved_book, BookAndDate
     remove_bad_node_from_list_by_data(&global_pickup_list_head, pickup_record_in_global_list); // common/list.c
     free_bad_node(pickup_record_in_global_list); // common/list.c
 
+    push_book_to_stack(g_recent_activity_stack, reserved_book); // 스택에 추가
     printf("알림: 예약 도서 '%s' 수령 및 대출 완료. 반납 예정일: ", reserved_book->title);
     print_date(return_due_date); // common/date_utils.c
     printf("\n");
