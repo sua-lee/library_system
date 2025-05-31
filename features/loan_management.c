@@ -50,9 +50,19 @@ int handle_loan_request(User* current_user, BookNode* requested_book, Date loan_
         printf("알림: 연체 중이므로 대출 및 예약을 할 수 없습니다.\n");
         return 0;
     }
-    if (current_user->borrowed_num >= MAX_BORROW_LIMIT) {
-        printf("알림: 대출 한도(%d권)를 초과하여 대출할 수 없습니다.\n", MAX_BORROW_LIMIT);
-        return 0;
+    int current_user_borrow_limit = MAX_BORROW_LIMIT; // 기본 한도
+    if (current_user->is_book_club_member == 1) {
+    current_user_borrow_limit = MAX_BORROW_LIMIT_CLUB; // 도서 클럽 회원 한도 적용
+    }
+    
+    if (current_user->borrowed_num >= current_user_borrow_limit) {
+        printf("알림: 대출 한도(%d권)를 초과하여 대출할 수 없습니다.\n", current_user_borrow_limit);
+        if (current_user->is_book_club_member == 1) {
+            printf(" (도서 클럽 회원은 최대 %d권까지 가능합니다.)\n", MAX_BORROW_LIMIT_CLUB);
+        } else {
+            printf(" (일반 회원은 최대 %d권까지 가능합니다.)\n", MAX_BORROW_LIMIT);
+        }
+    return 0;
     }
 
     if (requested_book->is_available_now == 1 && requested_book->reservation_list_num == 0) {
@@ -265,8 +275,19 @@ int process_pickup_loan(User* current_user, BookNode* reserved_book, BookAndDate
         process_book_reservation_queue(reserved_book);
         return 0;
     }
-    if (current_user->borrowed_num >= MAX_BORROW_LIMIT) {
-        printf("오류: 대출 한도(%d권)를 초과하여 예약된 도서('%s')를 대출할 수 없습니다. 예약은 유지되나 수령기간 내 조건 만족 시 가능합니다.\n", MAX_BORROW_LIMIT, reserved_book->title);
+    int current_user_borrow_limit_pickup = MAX_BORROW_LIMIT;
+    if (current_user->is_book_club_member == 1) {
+        current_user_borrow_limit_pickup = MAX_BORROW_LIMIT_CLUB;
+    }
+
+    if (current_user->borrowed_num >= current_user_borrow_limit_pickup) {
+        printf("오류: 대출 한도(%d권)를 초과하여 예약된 도서('%s')를 대출할 수 없습니다.\n", current_user_borrow_limit_pickup, reserved_book->title);
+        if (current_user->is_book_club_member == 1) {
+            printf(" (도서 클럽 회원은 최대 %d권까지, 현재 %d권 대출 중)\n", MAX_BORROW_LIMIT_CLUB, current_user->borrowed_num);
+        } else {
+            printf(" (일반 회원은 최대 %d권까지, 현재 %d권 대출 중)\n", MAX_BORROW_LIMIT, current_user->borrowed_num);
+        }
+        printf(" 예약은 유지되나 수령기간 내 조건 만족 시 대출 가능합니다.\n");
         return 0;
     }
 
